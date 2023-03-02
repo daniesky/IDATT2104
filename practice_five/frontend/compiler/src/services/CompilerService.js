@@ -10,12 +10,15 @@ const apiClient = axios.create({
 });
 
 export default {
-    sendCode(code) {
-        return apiClient.post("/compile",code)
+    sendCode(code1) {
+        return apiClient.post("/compile",{
+            code:code1
+        })
             .then((response) => {
                 return response.data
             })
             .catch((error) => {
+                console.log(error.response)
                 return error;
             })
     }

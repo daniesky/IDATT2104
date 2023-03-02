@@ -3,8 +3,8 @@
   <p class = "subtext">Created by Daniel Skymoen</p>
   <div class = "comp">
     <textarea class = "code box" v-model = "code"></textarea>
-    <button>Compile</button>
-    <textarea readonly class = "compiled box"></textarea>
+    <button @click = "compile()">Compile</button>
+    <textarea readonly class = "compiled box" v-model = "compiled"></textarea>
   </div>
 </template>
 
@@ -42,14 +42,15 @@ import CompilerService from "@/services/CompilerService";
    },
    methods: {
      compile(){
-       CompilerService.sendCode(this.code)
+       let o = this.code.toString();
+       CompilerService.sendCode(o)
            .then((response) => {
              let x = response.toString();
-             this.code = x;
+             this.compiled = x;
            })
            .catch((error) => {
              let x = error.toString();
-             this.code = x;
+             this.compiled = x;
            })
      }
    }
