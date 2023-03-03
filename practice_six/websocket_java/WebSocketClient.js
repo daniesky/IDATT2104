@@ -13,7 +13,12 @@ const httpServer = net.createServer((connection) => {
     <script>
       let ws = new WebSocket('ws://localhost:3001');
       ws.onmessage = event => alert('Message from server: ' + event.data);
-      ws.onopen = () => ws.send('hello');
+      ws.onopen = () => {
+          ws.send("Hello");
+          console.log("Open");
+      }
+      ws.onclose = () => console.log("Closing...");
+      
     </script>
   </body>
 </html>

@@ -3,6 +3,7 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.net.ServerSocket;
 import java.net.Socket;
+import java.nio.ByteBuffer;
 import java.nio.charset.StandardCharsets;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
@@ -58,9 +59,63 @@ public class WebSocket {
                 System.out.println(new String(response, StandardCharsets.UTF_8));
                 out.write(response, 0, response.length);
 
-                //We should now have a completed handshake and we can start transferring data.
-            }
+                while (true) {
+                    byte[] frameHeader = new byte[2];
+                    in.read(frameHeader);
 
+                    //We read the first parts of the message frame. The opcode is the message type, fin indicates if this is final fragment in a message.
+                    //masked indicates if the payload data is masked or not.
+
+                    byte opcode = (byte)(frameHeader[0] & 0x0F);
+                    boolean fin = (frameHeader[1] & 0x80) != 0;
+                    boolean masked = (frameHeader[1] & 0x80) != 0;
+                    int payloadLength = (byte)(frameHeader[1] & 0x7F);
+
+
+                    if(payloadLength == 126){
+                        //We extract whether or not there is another extension of payload.
+                        byte[] extendedLen = new byte[2];
+                        in.read(extendedLen);
+                        payloadLength = ByteBuffer.wrap(extendedLen).getShort();
+                    }
+                    else if(payloadLength == 127){
+                        byte[] extendedLen = new byte[8];
+                        in.read(extendedLen);
+                        payloadLength = (int) ByteBuffer.wrap(extendedLen).getLong();
+                    }
+
+                    byte[] mask = new byte[4];
+                    if(masked){
+                        in.read(mask);
+                    }
+
+                    byte[] payload = new byte[payloadLength];
+
+                    in.read(payload);
+
+                    //Use the mask and a XOR operation to demask the payload.
+                    if(masked) {
+                        for (int i = 0; i < payloadLength; i++){
+                            payload[i] ^= mask[i % 4];
+                        }
+                    }
+
+                    String message = new String(payload, StandardCharsets.UTF_8);
+                    System.out.println("Received message from client: " + message);
+
+
+                    String returnMes = "Message received";
+
+                    byte[] responsePayload = returnMes.getBytes(StandardCharsets.UTF_8);
+                    byte[] responseHeader = new byte[2];
+                    responseHeader[0] = (byte) (0x80 | opcode);
+                    responseHeader[1] = (byte) responsePayload.length;
+                    out.write(responseHeader);
+                    out.write(responsePayload);
+
+                }
+
+            }
 
 
         } catch (NoSuchAlgorithmException e) {
@@ -68,7 +123,7 @@ public class WebSocket {
         }
     }
 
-    public static void main(String[] args) throws IOException {
+        public static void main(String[] args) throws IOException {
         WebSocket ws = new WebSocket();
         ws.start();
     }
