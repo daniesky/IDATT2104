@@ -60,58 +60,14 @@ public class WebSocket {
                 out.write(response, 0, response.length);
 
                 while (true) {
-                    byte[] frameHeader = new byte[2];
-                    in.read(frameHeader);
+                    String clientMes = this.decryptInput(in);
+                    System.out.println("Received message from client: " + clientMes);
 
-                    //We read the first parts of the message frame. The opcode is the message type, fin indicates if this is final fragment in a message.
-                    //masked indicates if the payload data is masked or not.
-
-                    byte opcode = (byte)(frameHeader[0] & 0x0F);
-                    boolean fin = (frameHeader[1] & 0x80) != 0;
-                    boolean masked = (frameHeader[1] & 0x80) != 0;
-                    int payloadLength = (byte)(frameHeader[1] & 0x7F);
-
-
-                    if(payloadLength == 126){
-                        //We extract whether or not there is another extension of payload.
-                        byte[] extendedLen = new byte[2];
-                        in.read(extendedLen);
-                        payloadLength = ByteBuffer.wrap(extendedLen).getShort();
-                    }
-                    else if(payloadLength == 127){
-                        byte[] extendedLen = new byte[8];
-                        in.read(extendedLen);
-                        payloadLength = (int) ByteBuffer.wrap(extendedLen).getLong();
-                    }
-
-                    byte[] mask = new byte[4];
-                    if(masked){
-                        in.read(mask);
-                    }
-
-                    byte[] payload = new byte[payloadLength];
-
-                    in.read(payload);
-
-                    //Use the mask and a XOR operation to demask the payload.
-                    if(masked) {
-                        for (int i = 0; i < payloadLength; i++){
-                            payload[i] ^= mask[i % 4];
-                        }
-                    }
-
-                    String message = new String(payload, StandardCharsets.UTF_8);
-                    System.out.println("Received message from client: " + message);
-
+                    //Construct a response
 
                     String returnMes = "Message received";
+                    this.sendResponse(out, returnMes);
 
-                    byte[] responsePayload = returnMes.getBytes(StandardCharsets.UTF_8);
-                    byte[] responseHeader = new byte[2];
-                    responseHeader[0] = (byte) (0x80 | opcode);
-                    responseHeader[1] = (byte) responsePayload.length;
-                    out.write(responseHeader);
-                    out.write(responsePayload);
 
                 }
 
@@ -121,6 +77,63 @@ public class WebSocket {
         } catch (NoSuchAlgorithmException e) {
             e.printStackTrace();
         }
+    }
+
+    private void sendResponse(OutputStream out, String mes) throws IOException{
+        byte[] responsePayload = returnMes.getBytes(StandardCharsets.UTF_8);
+        byte[] responseHeader = new byte[2];
+        responseHeader[0] = (byte) (0x80 | opcode);
+        responseHeader[1] = (byte) responsePayload.length;
+        out.write(responseHeader);
+        out.write(responsePayload);
+    }
+
+    private String decryptInput(InputStream in) throws IOException {
+        byte[] frameHeader = new byte[2];
+        in.read(frameHeader);
+
+        //We read the first parts of the message frame. The opcode is the message type, fin indicates if this is final fragment in a message.
+        //masked indicates if the payload data is masked or not.
+
+        byte opcode = (byte)(frameHeader[0] & 0x0F);
+        boolean fin = (frameHeader[1] & 0x80) != 0;
+        boolean masked = (frameHeader[1] & 0x80) != 0;
+        int payloadLength = (byte)(frameHeader[1] & 0x7F);
+
+        //Determine payload length
+
+        if(payloadLength == 126){
+            //We extract whether or not there is another extension of payload.
+            byte[] extendedLen = new byte[2];
+            in.read(extendedLen);
+            payloadLength = ByteBuffer.wrap(extendedLen).getShort();
+        }
+        else if(payloadLength == 127){
+            byte[] extendedLen = new byte[8];
+            in.read(extendedLen);
+            payloadLength = (int) ByteBuffer.wrap(extendedLen).getLong();
+        }
+
+        //Read mask if masked.
+        byte[] mask = new byte[4];
+        if(masked){
+            in.read(mask);
+        }
+
+        //Read the actual payload
+        byte[] payload = new byte[payloadLength];
+
+        in.read(payload);
+
+        //Use the mask and a XOR operation to demask the payload.
+        if(masked) {
+            for (int i = 0; i < payloadLength; i++){
+                payload[i] ^= mask[i % 4];
+            }
+        }
+
+        String message = new String(payload, StandardCharsets.UTF_8);
+        return message;
     }
 
         public static void main(String[] args) throws IOException {
