@@ -22,7 +22,8 @@ const httpServer = net.createServer((connection) => {
     }
       let ws = new WebSocket('ws://localhost:3001');
       ws.onmessage = (event) => {
-            document.getElementById("reply").value += (event.data + "\n");
+            var txtArea = document.getElementById("reply");
+            txtArea.value += (event.data + '\\n');
       };
       ws.onopen = () => {
           ws.send("Hello");

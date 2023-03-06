@@ -87,7 +87,7 @@ public class WebSocket {
                                     + "\r\n\r\n").getBytes("UTF-8");
 
                     //Write the response to the output stream.
-                    System.out.println("Responding to request from client:" + client.getInetAddress().toString());
+                    System.out.println("Responding to request from client:" + client.getInetAddress().toString() + ": " + client.getPort());
                     out.write(response, 0, response.length);
                     out.flush();
 
@@ -101,7 +101,7 @@ public class WebSocket {
                                     String received = decryptInput(in);
                                     if (!received.isBlank() && !received.isEmpty()) {
                                         System.out.println("Message received from client: " + received);
-                                        globalMessage("From " + finalClient.getInetAddress().toString() + ": " + received);
+                                        globalMessage("From " + finalClient.getInetAddress().toString() + ":" + finalClient.getPort() + "-- " + received);
                                     }
                                 } catch(SocketException e){
                                     Thread.currentThread().interrupt();
