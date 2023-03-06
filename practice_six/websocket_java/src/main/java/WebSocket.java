@@ -36,7 +36,7 @@ public class WebSocket {
                     String in = sc.nextLine();
                     if(!in.isBlank() && !in.isBlank()){
                         try{
-                            globalMessage(in);
+                            globalMessage("From Server: " + in);
                         }
                         catch(IOException e){
                             System.out.println("Error occured when transmitting message");
@@ -92,6 +92,7 @@ public class WebSocket {
                     out.flush();
 
                     //After a successful handshake, thread is forked and listens for messages from client.
+                    Socket finalClient = client;
                     Thread readThread = new Thread(new Runnable() {
                         @Override
                         public void run() {
@@ -100,7 +101,7 @@ public class WebSocket {
                                     String received = decryptInput(in);
                                     if (!received.isBlank() && !received.isEmpty()) {
                                         System.out.println("Message received from client: " + received);
-                                        globalMessage(received);
+                                        globalMessage("From " + finalClient.getInetAddress().toString() + ": " + received);
                                     }
                                 } catch(SocketException e){
                                     Thread.currentThread().interrupt();
