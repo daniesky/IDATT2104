@@ -3,6 +3,7 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.net.ServerSocket;
 import java.net.Socket;
+import java.net.SocketException;
 import java.nio.ByteBuffer;
 import java.nio.charset.StandardCharsets;
 import java.security.MessageDigest;
@@ -101,8 +102,11 @@ public class WebSocket {
                                         System.out.println("Message received from client: " + received);
                                         globalMessage(received);
                                     }
+                                } catch(SocketException e){
+                                    Thread.currentThread().interrupt();
                                 } catch (IOException e) {
                                     e.printStackTrace();
+                                    Thread.currentThread().interrupt();
                                 }
                             }
                         }
