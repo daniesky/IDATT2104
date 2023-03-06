@@ -58,16 +58,31 @@ public class WebSocket {
                 System.out.println("Responding with:");
                 System.out.println(new String(response, StandardCharsets.UTF_8));
                 out.write(response, 0, response.length);
+                out.flush();
 
+                Thread readThread = new Thread(new Runnable() {
+                    @Override
+                    public void run() {
+                        while(true){
+                            try {
+                                String received = decryptInput(in);
+                                if(!received.isBlank() && !received.isEmpty()){
+                                    System.out.println("Message received from client: " + received);
+                                }
+                            } catch (IOException e) {
+                                e.printStackTrace();
+                            }
+                        }
+                    }
+                }
+                );
+                readThread.start();
                 while (true) {
-                    String clientMes = this.decryptInput(in);
-                    System.out.println("Received message from client: " + clientMes);
-
-                    //Construct a response
-
-                    String returnMes = "Message received";
-                    this.sendResponse(out, returnMes);
-
+                    Scanner readServer = new Scanner(System.in);
+                    String mes = readServer.nextLine();
+                    if(!mes.isEmpty() && !mes.isBlank()){
+                        this.sendWebSocketMessage(mes, out);
+                    }
 
                 }
 
@@ -79,8 +94,9 @@ public class WebSocket {
         }
     }
 
-    private void sendResponse(OutputStream out, String mes) throws IOException{
-        byte[] responsePayload = returnMes.getBytes(StandardCharsets.UTF_8);
+    /*
+    public void sendResponse(OutputStream out, String mes) throws IOException{
+        byte[] responsePayload = mes.getBytes(StandardCharsets.UTF_8);
         byte[] responseHeader = new byte[2];
         responseHeader[0] = (byte) (0x80 | opcode);
         responseHeader[1] = (byte) responsePayload.length;
@@ -88,7 +104,55 @@ public class WebSocket {
         out.write(responsePayload);
     }
 
-    private String decryptInput(InputStream in) throws IOException {
+     */
+
+
+
+    public void sendWebSocketMessage(String message, OutputStream outputStream) throws IOException {
+        byte[] messageBytes = message.getBytes(StandardCharsets.UTF_8);
+        byte[] header = new byte[10];
+        int newSize = 0;
+
+        // Set FIN bit and opcode
+        header[0] = (byte) 0x81;
+
+        int messageLength = messageBytes.length;
+
+        // Set payload length bytes
+        if (messageLength <= 125) {
+            header[1] = (byte) messageLength;
+            newSize = 2;
+        } else if (messageLength <= 65535) {
+            header[1] = (byte) 126;
+            header[2] = (byte) ((messageLength >> 8) & 0xFF);
+            header[3] = (byte) (messageLength & 0xFF);
+            newSize = 4;
+        } else {
+            header[1] = (byte) 127;
+            header[2] = (byte) ((messageLength >> 56) & 0xFF);
+            header[3] = (byte) ((messageLength >> 48) & 0xFF);
+            header[4] = (byte) ((messageLength >> 40) & 0xFF);
+            header[5] = (byte) ((messageLength >> 32) & 0xFF);
+            header[6] = (byte) ((messageLength >> 24) & 0xFF);
+            header[7] = (byte) ((messageLength >> 16) & 0xFF);
+            header[8] = (byte) ((messageLength >> 8) & 0xFF);
+            header[9] = (byte) (messageLength & 0xFF);
+            newSize = 10;
+        }
+        byte[] finalHeader = new byte[newSize];
+        System.arraycopy(header, 0, finalHeader, 0, newSize);
+        // Combine header and message into a single byte array
+        byte[] messageWithHeader = new byte[finalHeader.length + messageBytes.length];
+        System.arraycopy(finalHeader, 0, messageWithHeader, 0, finalHeader.length);
+        System.arraycopy(messageBytes, 0, messageWithHeader, finalHeader.length, messageBytes.length);
+
+        // Send combined byte array
+        outputStream.write(messageWithHeader);
+        outputStream.flush();
+    }
+
+
+    public String decryptInput(InputStream in) throws IOException {
         byte[] frameHeader = new byte[2];
         in.read(frameHeader);
 

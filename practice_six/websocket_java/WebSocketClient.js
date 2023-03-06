@@ -12,7 +12,9 @@ const httpServer = net.createServer((connection) => {
     WebSocket test page
     <script>
       let ws = new WebSocket('ws://localhost:3001');
-      ws.onmessage = event => alert('Message from server: ' + event.data);
+      ws.onmessage = (event) => {
+            console.log('Message from server:', event.data);
+      };
       ws.onopen = () => {
           ws.send("Hello");
           console.log("Open");
