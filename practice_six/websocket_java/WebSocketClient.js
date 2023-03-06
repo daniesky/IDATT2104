@@ -9,11 +9,20 @@ const httpServer = net.createServer((connection) => {
     <meta charset="UTF-8" />
   </head>
   <body>
-    WebSocket test page
+    <h1>WebSocket test page</h1>
+    <div class = "chat">
+    <textarea id = "message">Input your messages here</textarea>
+    <textarea readonly id = "reply"></textarea>
+    </div>
+    <button onClick = "sendMessage()">Send message</button>
     <script>
+    function sendMessage(){
+        let mes = document.getElementById("message").value
+        ws.send(mes);
+    }
       let ws = new WebSocket('ws://localhost:3001');
       ws.onmessage = (event) => {
-            console.log('Message from server:', event.data);
+            document.getElementById("reply").value += event.data + "\n";
       };
       ws.onopen = () => {
           ws.send("Hello");
@@ -21,7 +30,23 @@ const httpServer = net.createServer((connection) => {
       }
       ws.onclose = () => console.log("Closing...");
       
+      
+     
+      
     </script>
+    
+    <style>
+    .chat {
+    display:flex;
+    flex-direction: row;
+    gap: 50px;
+    }
+    textarea{
+    height: 500px;
+    width:500px;
+    resize: none;
+    }
+    </style>
   </body>
 </html>
 `;
