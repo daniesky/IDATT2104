@@ -1,0 +1,7 @@
+[
+{
+  "directory": "/home/daniesky/CPPprojects/UDPCalc/build",
+  "command": "/usr/bin/c++    -std=c++1y -Wall -Wextra -o CMakeFiles/UDPCalc.dir/main.cpp.o -c /home/daniesky/CPPprojects/UDPCalc/main.cpp",
+  "file": "/home/daniesky/CPPprojects/UDPCalc/main.cpp"
+}
+]

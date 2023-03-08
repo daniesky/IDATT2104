@@ -1,0 +1,28 @@
+#IncludeRegexLine: ^[ 	]*[#%][ 	]*(include|import)[ 	]*[<"]([^">]+)([">])
+
+#IncludeRegexScan: ^.*$
+
+#IncludeRegexComplain: ^$
+
+#IncludeRegexTransform: 
+
+/home/daniesky/CPPprojects/IDATT2104/practice_three/initial_task/client/main.cpp
+arpa/inet.h
+-
+iostream
+-
+netinet/in.h
+-
+stdio.h
+-
+stdlib.h
+-
+string.h
+-
+string
+-
+sys/socket.h
+-
+unistd.h
+-
+

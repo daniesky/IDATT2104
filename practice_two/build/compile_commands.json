@@ -1,0 +1,7 @@
+[
+{
+  "directory": "/home/daniesky/CPPprojects/IDATT2104/practice_two/build",
+  "command": "/usr/bin/c++    -pthread -std=c++1y -Wall -Wextra -o CMakeFiles/worker_threads.dir/main.cpp.o -c /home/daniesky/CPPprojects/IDATT2104/practice_two/main.cpp",
+  "file": "/home/daniesky/CPPprojects/IDATT2104/practice_two/main.cpp"
+}
+]

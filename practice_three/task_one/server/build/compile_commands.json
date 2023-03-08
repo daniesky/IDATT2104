@@ -1,0 +1,7 @@
+[
+{
+  "directory": "/home/daniesky/CPPprojects/client_server/build",
+  "command": "/usr/bin/c++    -std=c++1y -Wall -Wextra -o CMakeFiles/client_server.dir/main.cpp.o -c /home/daniesky/CPPprojects/client_server/main.cpp",
+  "file": "/home/daniesky/CPPprojects/client_server/main.cpp"
+}
+]

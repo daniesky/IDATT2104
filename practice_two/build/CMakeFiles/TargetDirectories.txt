@@ -1,0 +1,3 @@
+/home/daniesky/CPPprojects/IDATT2104/practice_two/build/CMakeFiles/rebuild_cache.dir
+/home/daniesky/CPPprojects/IDATT2104/practice_two/build/CMakeFiles/edit_cache.dir
+/home/daniesky/CPPprojects/IDATT2104/practice_two/build/CMakeFiles/worker_threads.dir

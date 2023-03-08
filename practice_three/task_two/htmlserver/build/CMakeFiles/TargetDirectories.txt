@@ -1,0 +1,3 @@
+/home/daniesky/CPPprojects/htmlserver/build/CMakeFiles/rebuild_cache.dir
+/home/daniesky/CPPprojects/htmlserver/build/CMakeFiles/edit_cache.dir
+/home/daniesky/CPPprojects/htmlserver/build/CMakeFiles/htmlserver.dir

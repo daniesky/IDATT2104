@@ -1,0 +1,3 @@
+/home/daniesky/CPPprojects/UDPCalc/build/CMakeFiles/rebuild_cache.dir
+/home/daniesky/CPPprojects/UDPCalc/build/CMakeFiles/edit_cache.dir
+/home/daniesky/CPPprojects/UDPCalc/build/CMakeFiles/UDPCalc.dir
