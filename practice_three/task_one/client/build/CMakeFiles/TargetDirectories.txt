@@ -1,3 +1,0 @@
-/home/daniesky/CPPprojects/IDATT2104/practice_three/task_one/client/build/CMakeFiles/rebuild_cache.dir
-/home/daniesky/CPPprojects/IDATT2104/practice_three/task_one/client/build/CMakeFiles/edit_cache.dir
-/home/daniesky/CPPprojects/IDATT2104/practice_three/task_one/client/build/CMakeFiles/client.dir

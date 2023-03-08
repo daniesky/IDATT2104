@@ -1,1 +1,0 @@
-/usr/bin/c++  -std=c++1y -Wall -Wextra -rdynamic CMakeFiles/UDPCalc.dir/main.cpp.o -o UDPCalc 
