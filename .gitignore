@@ -1,6 +1,5 @@
 a.out
 target
-rust
 .DS_Store
 node_modules
 /dist
